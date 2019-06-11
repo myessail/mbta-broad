@@ -1,6 +1,4 @@
 language: node_js
 node_js: 10
 
-"script": {
-  "test": "npm run test:unit"
-}
+script: npm run test:unit
