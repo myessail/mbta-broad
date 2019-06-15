@@ -1,4 +1,4 @@
-# mbta-broad
+# mbta-broad ![status](https://travis-ci.org/myessail/mbta-broad.svg?branch=master)
 
 ## Project setup
 ```
