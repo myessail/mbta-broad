@@ -18,24 +18,31 @@ export default {
   name: 'ProblemOne',
   data () {
     return {
-      lines: null
+      lines: null,
+      info: null
     }
-  },
-  mounted () {
-    axios
-      .get('https://api-v3.mbta.com/routes?filter[type]=0,1')
-      .then(response => (this.lines = this.getLines(response.data.data)))
   },
   methods: {
-    getLines: function (info) {
-      console.log(info)
-      let res = []
-      info.forEach(function (el) {
-        res.push(_.get(el, 'attributes.long_name'))
-      })
-      console.log(res)
-      return res
+    getLines: function () {
+      let self = this
+      return axios.get('https://api-v3.mbta.com/routes?filter[type]=0,1')
+        .then(function (response) {
+          self.info = response.data.data
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+          let res = []
+          self.info.forEach(function (el) {
+            res.push(_.get(el, 'attributes.long_name'))
+          })
+          self.lines = res
+        })
     }
+  },
+  created () {
+    this.getLines()
   }
 }
 </script>
