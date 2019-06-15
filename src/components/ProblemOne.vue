@@ -4,8 +4,11 @@
       <h1>Problem 1</h1>
     </div>
     <div id="p1-answer">
-      <p>{{ lines }}</p>
-      <p></p>
+      <h5>{{ lines }}</h5>
+      <p>
+        I chose to use 'https://api-v3.mbta.com/routes?filter[type]=0,1' over 'https://api-v3.mbta.com/routes',
+        since I think it's easier and safer to let the API do the filtering work between subway and non-subway routes.
+      </p>
     </div>
   </div>
 </template>
