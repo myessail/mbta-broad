@@ -31,7 +31,7 @@
           <input v-model="destination" placeholder="Destination station">
         </label>
         <button v-on:click="findPath">Route me!</button>
-        <h5> {{ path }}</h5>
+        <h3 v-if="path.length > 0"> {{ path }}</h3>
       </div>
     </div>
   </div>
