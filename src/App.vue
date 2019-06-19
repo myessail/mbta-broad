@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <ProblemOne></ProblemOne>
+    <ProblemTwo></ProblemTwo>
   </div>
 </template>
 
 <script>
 import ProblemOne from './components/ProblemOne.vue'
+import ProblemTwo from './components/ProblemTwo'
 
 export default {
   name: 'app',
   components: {
+    ProblemTwo,
     ProblemOne
   }
 }
