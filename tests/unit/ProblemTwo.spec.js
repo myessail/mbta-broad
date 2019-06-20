@@ -400,7 +400,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             expect(wrapper.vm.$data.largestNumber).to.eq(6)
@@ -424,7 +424,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()
@@ -451,7 +451,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()
@@ -485,7 +485,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()
@@ -516,7 +516,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()
@@ -547,7 +547,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()
@@ -578,7 +578,7 @@ describe('ProblemTwo', function () {
           wrapper.vm.analyzeRoutes()
           setTimeout(function () {
             resolve()
-          }, 1000)
+          }, 10)
         })
           .then(function () {
             wrapper.vm.findMultipleConnections()

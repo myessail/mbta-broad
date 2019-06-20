@@ -12,7 +12,7 @@
       </div>
       <div id="p2-part3-answer">
         <h3>Stops that connect 2 or more subway routes:</h3>
-        <li v-for="(lines, station) in multipleConnections" v-bind:key="lines">
+        <li v-for="(lines, station) in multipleConnections">
           {{ station }} - {{ lines }}
         </li>
       </div>
@@ -29,7 +29,8 @@
           <input v-model="destination" placeholder="Destination station">
         </label>
         <button v-on:click="findPath">Route me!</button>
-        <p v-if="hasError">Source or Destination could not be found. Make sure you are entering the full station name.</p>
+        <p v-if="hasError">Source or Destination could not be found. Make sure you are entering the full station
+          name.</p>
         <h3 v-if="path.length > 0 && !hasError"> {{ path }}</h3>
       </div>
     </div>
@@ -142,6 +143,9 @@ export default {
             _.set(self.stopsAndLines, stopName, linesAtStop)
           })
         })
+        .catch(function (error) {
+          console.log(error)
+        })
     },
     // find stops that connect multiple lines
     findMultipleConnections: function () {
@@ -162,7 +166,6 @@ export default {
               })
             })
         })
-        setTimeout(() => resolve('done'), 1000)
       })
     },
     // build a map of which lines are connected to which
