@@ -1,5 +1,7 @@
 # mbta-broad [![Build Status](https://travis-ci.org/myessail/mbta-broad.svg?branch=master)](https://travis-ci.org/myessail/mbta-broad)
 
+## This project is hosted at [mbta.yessaillian.com](mbta.yessaillian.com), to run locally follow the instructions below:
+
 ## Project setup
 ```
 npm install
@@ -10,25 +12,9 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
+### To run tests:
 ```
 npm run test:unit
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+This project was written using node.js and vue, tested with mocha/chai, and deployed using heroku. CI is also running on travis, which can be accessed via the image at the top of the README. Travis also takes care of deploying, once the master build passes.
