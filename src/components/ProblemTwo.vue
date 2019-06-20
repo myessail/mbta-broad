@@ -166,6 +166,7 @@ export default {
               })
             })
         })
+        setTimeout(() => resolve('done'), 1000)
       })
     },
     // build a map of which lines are connected to which
