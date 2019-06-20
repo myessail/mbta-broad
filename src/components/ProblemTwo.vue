@@ -5,16 +5,14 @@
         <h1>Problem 2</h1>
       </div>
       <div id="p2-part1-answer">
-        <h3>Route with the most stops: {{ largestRoute }}</h3>
-        <h3>Number of stops: {{ largestNumber }}</h3>
+        <h3>Route with the most stops: {{ largestRoute }} - {{ largestNumber }} stops</h3>
       </div>
       <div id="p2-part2-answer">
-        <h3>Route with the fewest stops: {{ smallestRoute }}</h3>
-        <h3>Number of stops: {{ smallestNumber }}</h3>
+        <h3>Route with the fewest stops: {{ smallestRoute }} - {{ smallestNumber }} stops</h3>
       </div>
       <div id="p2-part3-answer">
         <h3>Stops that connect 2 or more subway routes:</h3>
-        <li v-for="(lines, station) in multipleConnections">
+        <li v-for="(lines, station) in multipleConnections" v-bind:key="lines">
           {{ station }} - {{ lines }}
         </li>
       </div>
@@ -31,7 +29,8 @@
           <input v-model="destination" placeholder="Destination station">
         </label>
         <button v-on:click="findPath">Route me!</button>
-        <h3 v-if="path.length > 0"> {{ path }}</h3>
+        <p v-if="hasError">Source or Destination could not be found. Make sure you are entering the full station name.</p>
+        <h3 v-if="path.length > 0 && !hasError"> {{ path }}</h3>
       </div>
     </div>
   </div>
@@ -57,10 +56,12 @@ export default {
       multipleConnections: {},
       source: null,
       destination: null,
-      path: []
+      path: [],
+      hasError: false
     }
   },
   methods: {
+    // get the route data from the api and store it
     getInfo: function () {
       let self = this
       return axios.get('https://api-v3.mbta.com/routes?filter[type]=0,1')
@@ -71,6 +72,7 @@ export default {
           console.log(error)
         })
     },
+    // construct a map that contains the id and line name for each subway line
     getRoutes: function () {
       let self = this
       let result = []
@@ -87,6 +89,7 @@ export default {
 
       self.routes = result
     },
+    // return the number of stops for the given route
     numStopsRoute: function (routeName) {
       let url = 'https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D='
       let urlWithRoute = url + routeName
@@ -100,6 +103,7 @@ export default {
           console.log(error)
         })
     },
+    // find the routes with the most/least stops
     analyzeRoutes: function () {
       let self = this
 
@@ -123,6 +127,8 @@ export default {
           })
       })
     },
+    // helper that goes through and adds this stop to the map if it isn't already there,
+    // and adds the current line to the list of lines for that stop
     connectionHelp: function (urlWithRoute, stopsAndLines, lineName) {
       let self = this
       return axios.get(urlWithRoute)
@@ -137,6 +143,7 @@ export default {
           })
         })
     },
+    // find stops that connect multiple lines
     findMultipleConnections: function () {
       return new Promise((resolve, reject) => {
         let self = this
@@ -149,6 +156,7 @@ export default {
 
           self.connectionHelp(urlWithRoute, self.stopsAndLines, lineName)
             .then(function () {
+              // afterwards, pick the stops that have more than one line in their list
               self.multipleConnections = _.pickBy(self.stopsAndLines, function (lines, stop) {
                 return lines.length > 1
               })
@@ -157,6 +165,7 @@ export default {
         setTimeout(() => resolve('done'), 1000)
       })
     },
+    // build a map of which lines are connected to which
     buildConnectionsMap: function () {
       let self = this
 
@@ -183,12 +192,20 @@ export default {
         })
       })
     },
+    // find a path between two stops
     findPath: function () {
       let self = this
+      self.hasError = false
       // find the lines that each of the stations are on
       // see if they are on the same one, otherwise just pick something
-      let source = _.get(self.stopsAndLines, self.source)
-      let destination = _.get(self.stopsAndLines, self.destination)
+      let source = _.get(self.stopsAndLines, self.source, [])
+      let destination = _.get(self.stopsAndLines, self.destination, [])
+
+      if (source.length === 0 || destination.length === 0) {
+        self.hasError = true
+        // eslint-disable-next-line no-throw-literal
+        throw 'source or destination could not be found'
+      }
 
       let linesInCommon = _.intersection(source, destination)
 

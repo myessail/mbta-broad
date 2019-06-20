@@ -269,6 +269,48 @@ const dummyBlueStops = {
   ]
 }
 
+const stubRequests = function () {
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Red', {
+    status: 200,
+    responseText: redLine
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Blue', {
+    status: 200,
+    responseText: blueLine
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Orange', {
+    status: 200,
+    responseText: orangeLine
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-E', {
+    status: 200,
+    responseText: greenE
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-D', {
+    status: 200,
+    responseText: greenD
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-C', {
+    status: 200,
+    responseText: greenC
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-B', {
+    status: 200,
+    responseText: greenB
+  })
+
+  moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Mattapan', {
+    status: 200,
+    responseText: mattapan
+  })
+}
+
 describe('ProblemTwo', function () {
   beforeEach(() => {
     moxios.install()
@@ -371,46 +413,7 @@ describe('ProblemTwo', function () {
   })
 
   it('should find stops with multiple connections', function () {
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Red', {
-      status: 200,
-      responseText: redLine
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Blue', {
-      status: 200,
-      responseText: blueLine
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Orange', {
-      status: 200,
-      responseText: orangeLine
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-E', {
-      status: 200,
-      responseText: greenE
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-D', {
-      status: 200,
-      responseText: greenD
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-C', {
-      status: 200,
-      responseText: greenC
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Green-B', {
-      status: 200,
-      responseText: greenB
-    })
-
-    moxios.stubRequest('https://api-v3.mbta.com/stops?include=route&filter%5Broute%5D=Mattapan', {
-      status: 200,
-      responseText: mattapan
-    })
-
+    stubRequests()
     let wrapper = mount(ProblemTwo)
     return wrapper.vm.getInfo()
       .then(function () {
@@ -423,6 +426,176 @@ describe('ProblemTwo', function () {
             resolve()
           }, 1000)
         })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            let stopNames = _.keys(wrapper.vm.$data.multipleConnections)
+            expect(stopNames).to.have.length(13)
+
+            let stopsAndLines = _.keys(wrapper.vm.$data.stopsAndLines)
+            expect(stopsAndLines).to.have.length(119)
+          })
+      })
+  })
+
+  it('should build map of connections', function () {
+    stubRequests()
+    let wrapper = mount(ProblemTwo)
+    return wrapper.vm.getInfo()
+      .then(function () {
+        wrapper.vm.getRoutes()
+      })
+      .then(function () {
+        return new Promise(function (resolve) {
+          wrapper.vm.analyzeRoutes()
+          setTimeout(function () {
+            resolve()
+          }, 1000)
+        })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            wrapper.vm.buildConnectionsMap()
+          })
+          .then(function () {
+            let red = _.get(wrapper.vm.$data.lineConnections, 'Red Line')
+            expect(red).to.have.length(7)
+            expect(red.includes('Orange Line')).to.eq(true)
+
+            let blue = _.get(wrapper.vm.$data.lineConnections, 'Blue Line')
+            expect(blue).to.have.length(5)
+
+            let lines = _.keys(wrapper.vm.$data.lineConnections)
+            expect(lines).to.have.length(8)
+          })
+      })
+  })
+
+  it('should find the correct path between 2 valid stops on the same line', function () {
+    stubRequests()
+    let wrapper = mount(ProblemTwo)
+    return wrapper.vm.getInfo()
+      .then(function () {
+        wrapper.vm.getRoutes()
+      })
+      .then(function () {
+        return new Promise(function (resolve) {
+          wrapper.vm.analyzeRoutes()
+          setTimeout(function () {
+            resolve()
+          }, 1000)
+        })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            wrapper.vm.buildConnectionsMap()
+          })
+          .then(function () {
+            wrapper.vm.$data.source = 'Oak Grove'
+            wrapper.vm.$data.destination = 'Ruggles'
+
+            wrapper.vm.findPath()
+
+            expect(wrapper.vm.$data.path).to.eq('Orange Line')
+          })
+      })
+  })
+
+  it('should find the correct path between 2 valid stops on different lines', function () {
+    stubRequests()
+    let wrapper = mount(ProblemTwo)
+    return wrapper.vm.getInfo()
+      .then(function () {
+        wrapper.vm.getRoutes()
+      })
+      .then(function () {
+        return new Promise(function (resolve) {
+          wrapper.vm.analyzeRoutes()
+          setTimeout(function () {
+            resolve()
+          }, 1000)
+        })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            wrapper.vm.buildConnectionsMap()
+          })
+          .then(function () {
+            wrapper.vm.$data.source = 'Ashmont'
+            wrapper.vm.$data.destination = 'Arlington'
+
+            wrapper.vm.findPath()
+
+            expect(wrapper.vm.$data.path).to.deep.equals(['Red Line', 'Green Line B'])
+          })
+      })
+  })
+
+  it('should find path for path with many transfers', function () {
+    stubRequests()
+    let wrapper = mount(ProblemTwo)
+    return wrapper.vm.getInfo()
+      .then(function () {
+        wrapper.vm.getRoutes()
+      })
+      .then(function () {
+        return new Promise(function (resolve) {
+          wrapper.vm.analyzeRoutes()
+          setTimeout(function () {
+            resolve()
+          }, 1000)
+        })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            wrapper.vm.buildConnectionsMap()
+          })
+          .then(function () {
+            wrapper.vm.$data.source = 'Saint Paul Street'
+            wrapper.vm.$data.destination = 'Mattapan'
+
+            wrapper.vm.findPath()
+
+            expect(wrapper.vm.$data.path).to.deep.equals(['Green Line B', 'Red Line', 'Mattapan Trolley'])
+          })
+      })
+  })
+
+  it('should show error if source or destination not found', function () {
+    stubRequests()
+    let wrapper = mount(ProblemTwo)
+    return wrapper.vm.getInfo()
+      .then(function () {
+        wrapper.vm.getRoutes()
+      })
+      .then(function () {
+        return new Promise(function (resolve) {
+          wrapper.vm.analyzeRoutes()
+          setTimeout(function () {
+            resolve()
+          }, 1000)
+        })
+          .then(function () {
+            wrapper.vm.findMultipleConnections()
+          })
+          .then(function () {
+            wrapper.vm.buildConnectionsMap()
+          })
+          .then(function () {
+            wrapper.vm.$data.source = 'My House'
+            wrapper.vm.$data.destination = 'Work'
+
+            wrapper.vm.findPath()
+          })
+          .catch(function (err) {
+            expect(err).to.eq('source or destination could not be found')
+            expect(wrapper.vm.$data.hasError).to.eq(true)
+          })
       })
   })
 })
