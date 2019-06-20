@@ -1,6 +1,6 @@
 # mbta-broad [![Build Status](https://travis-ci.org/myessail/mbta-broad.svg?branch=master)](https://travis-ci.org/myessail/mbta-broad)
 
-## This project is hosted at [mbta.yessaillian.com](mbta.yessaillian.com), to run locally follow the instructions below:
+## This project is hosted at [mbta.yessaillian.com](http://mbta.yessaillian.com), to run locally follow the instructions below:
 
 ## Project setup
 ```
